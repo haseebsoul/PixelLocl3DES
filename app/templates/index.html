@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelLock 3DES - Image Encryption System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-lock"></i> PixelLock 3DES</h1>
+                <p>Secure Image Encryption & Decryption System</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs Navigation -->
+            <div class="tabs-container">
+                <button class="tab-button active" data-tab="encrypt">
+                    <i class="fas fa-lock"></i> Encrypt Image
+                </button>
+                <button class="tab-button" data-tab="decrypt">
+                    <i class="fas fa-unlock"></i> Decrypt Image
+                </button>
+                <button class="tab-button" data-tab="verify">
+                    <i class="fas fa-check-circle"></i> Verify Integrity
+                </button>
+                <button class="tab-button" data-tab="info">
+                    <i class="fas fa-info-circle"></i> Information
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+
+            <!-- Encryption Tab -->
+            <div id="encrypt" class="tab-content active">
+                <div class="tab-section">
+                    <h2>Encrypt Your Image</h2>
+                    
+                    <div class="form-section">
+                        <!-- Key Management -->
+                        <div class="key-management">
+                            <h3>1. Encryption Key</h3>
+                            <div class="key-input-group">
+                                <textarea id="encryptionKey" placeholder="Your 3DES encryption key will appear here or paste an existing key..." class="key-textarea"></textarea>
+                                <div class="key-buttons">
+                                    <button id="generateKeyBtn" class="btn btn-primary">
+                                        <i class="fas fa-key"></i> Generate New Key
+                                    </button>
+                                    <button id="copyKeyBtn" class="btn btn-secondary">
+                                        <i class="fas fa-copy"></i> Copy Key
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="info-text"><i class="fas fa-info-circle"></i> Keep your key safe! You'll need it to decrypt your images.</p>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="file-upload-section">
+                            <h3>2. Select Image</h3>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag and drop your image here or click to select</p>
+                                <input type="file" id="encryptImageInput" accept="image/*" hidden>
+                            </div>
+                            <div id="uploadedFileName" class="file-name-display" style="display: none;">
+                                <i class="fas fa-image"></i> <span id="fileName"></span>
+                            </div>
+                        </div>
+
+                        <!-- Encrypt Button -->
+                        <div class="action-section">
+                            <button id="encryptBtn" class="btn btn-success" disabled>
+                                <i class="fas fa-lock"></i> Encrypt Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Encryption Results -->
+                    <div id="encryptResults" class="results-section" style="display: none;">
+                        <h3>Encryption Results</h3>
+                        <div class="result-info">
+                            <div class="info-item">
+                                <label>Original Size:</label>
+                                <span id="originalSize"></span>
+                            </div>
+                            <div class="info-item">
+                                <label>Encrypted Size:</label>
+                                <span id="encryptedSize"></span>
+                            </div>
+                            <div class="info-item">
+                                <label>Original Hash (SHA-256):</label>
+                                <span id="encryptedHash" class="hash-value"></span>
+                            </div>
+                        </div>
+                        <div class="encrypted-data-section">
+                            <h4>Encrypted Data (Base64):</h4>
+                            <textarea id="encryptedDataOutput" class="data-textarea" readonly></textarea>
+                            <button id="downloadEncryptedBtn" class="btn btn-primary">
+                                <i class="fas fa-download"></i> Download Encrypted Image
+                            </button>
+                            <button id="copyEncryptedBtn" class="btn btn-secondary">
+                                <i class="fas fa-copy"></i> Copy Encrypted Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decryption Tab -->
+            <div id="decrypt" class="tab-content">
+                <div class="tab-section">
+                    <h2>Decrypt Your Image</h2>
+                    
+                    <div class="form-section">
+                        <!-- Decryption Key -->
+                        <div class="key-management">
+                            <h3>1. Decryption Key</h3>
+                            <textarea id="decryptionKey" placeholder="Paste your 3DES decryption key here..." class="key-textarea"></textarea>
+                        </div>
+
+                        <!-- Encrypted Data Input -->
+                        <div class="file-upload-section">
+                            <h3>2. Encrypted Data</h3>
+                            <textarea id="encryptedDataInput" placeholder="Paste your encrypted image data (Base64) here..." class="data-textarea"></textarea>
+                        </div>
+
+                        <!-- Decrypt Button -->
+                        <div class="action-section">
+                            <button id="decryptBtn" class="btn btn-success">
+                                <i class="fas fa-unlock"></i> Decrypt Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Decryption Results -->
+                    <div id="decryptResults" class="results-section" style="display: none;">
+                        <h3>Decryption Results</h3>
+                        <div class="result-info">
+                            <div class="info-item">
+                                <label>Decrypted Size:</label>
+                                <span id="decryptedSize"></span>
+                            </div>
+                            <div class="info-item">
+                                <label>Decrypted Hash (SHA-256):</label>
+                                <span id="decryptedHash" class="hash-value"></span>
+                            </div>
+                        </div>
+                        <div class="image-preview-section">
+                            <h4>Image Preview:</h4>
+                            <img id="decryptedImagePreview" class="image-preview" alt="Decrypted Image">
+                        </div>
+                        <button id="downloadDecryptedBtn" class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download Decrypted Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verify Tab -->
+            <div id="verify" class="tab-content">
+                <div class="tab-section">
+                    <h2>Verify Image Integrity</h2>
+                    
+                    <div class="form-section">
+                        <!-- File Upload -->
+                        <div class="file-upload-section">
+                            <h3>1. Select Image</h3>
+                            <div class="file-upload-area" id="fileUploadAreaVerify">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag and drop your image here or click to select</p>
+                                <input type="file" id="verifyImageInput" accept="image/*" hidden>
+                            </div>
+                            <div id="uploadedFileNameVerify" class="file-name-display" style="display: none;">
+                                <i class="fas fa-image"></i> <span id="fileNameVerify"></span>
+                            </div>
+                        </div>
+
+                        <!-- Hash Input -->
+                        <div class="key-management">
+                            <h3>2. Expected Hash (SHA-256)</h3>
+                            <textarea id="expectedHash" placeholder="Paste the expected SHA-256 hash here..." class="key-textarea"></textarea>
+                        </div>
+
+                        <!-- Verify Button -->
+                        <div class="action-section">
+                            <button id="verifyBtn" class="btn btn-success" disabled>
+                                <i class="fas fa-check"></i> Verify Integrity
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Verification Results -->
+                    <div id="verifyResults" class="results-section" style="display: none;">
+                        <h3>Verification Results</h3>
+                        <div id="verificationStatus" class="verification-status"></div>
+                        <div class="result-info">
+                            <div class="info-item">
+                                <label>Calculated Hash:</label>
+                                <span id="calculatedHash" class="hash-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <label>Expected Hash:</label>
+                                <span id="displayedHash" class="hash-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Tab -->
+            <div id="info" class="tab-content">
+                <div class="tab-section">
+                    <h2>System Information</h2>
+                    
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <i class="fas fa-lock fa-2x"></i>
+                            <h3>3DES Encryption</h3>
+                            <p>Triple Data Encryption Standard with 192-bit keys (24 bytes) for strong confidentiality.</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                            <h3>SHA-256 Hashing</h3>
+                            <p>Secure Hash Algorithm for integrity verification and detection of unauthorized modifications.</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <i class="fas fa-lock-open fa-2x"></i>
+                            <h3>CBC Mode</h3>
+                            <p>Cipher Block Chaining mode with random IV for enhanced security.</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <i class="fas fa-key fa-2x"></i>
+                            <h3>Key Management</h3>
+                            <p>Cryptographically secure random key generation for maximum protection.</p>
+                        </div>
+                    </div>
+
+                    <div class="documentation">
+                        <h3>How to Use</h3>
+                        
+                        <h4><i class="fas fa-lock"></i> Encryption Process</h4>
+                        <ol>
+                            <li>Click "Generate New Key" to create a unique encryption key</li>
+                            <li>Save your key in a secure location (you'll need it to decrypt)</li>
+                            <li>Upload an image file (PNG, JPG, GIF, BMP, WebP, TIFF)</li>
+                            <li>Click "Encrypt Image" to encrypt your image</li>
+                            <li>Download or copy the encrypted data</li>
+                        </ol>
+
+                        <h4><i class="fas fa-unlock"></i> Decryption Process</h4>
+                        <ol>
+                            <li>Paste your decryption key</li>
+                            <li>Paste the encrypted image data (Base64)</li>
+                            <li>Click "Decrypt Image" to decrypt your image</li>
+                            <li>View and download the decrypted image</li>
+                        </ol>
+
+                        <h4><i class="fas fa-check-circle"></i> Integrity Verification</h4>
+                        <ol>
+                            <li>Upload an image file</li>
+                            <li>Paste the expected SHA-256 hash</li>
+                            <li>Click "Verify Integrity" to check if the image is authentic</li>
+                            <li>The system will confirm if the image matches the hash</li>
+                        </ol>
+
+                        <h3>Security Features</h3>
+                        <ul>
+                            <li><strong>Confidentiality:</strong> 3DES encryption ensures only authorized users can view images</li>
+                            <li><strong>Integrity:</strong> SHA-256 hashing detects any unauthorized modifications</li>
+                            <li><strong>Key Security:</strong> Users manage their own keys for complete control</li>
+                            <li><strong>CBC Mode:</strong> Random initialization vector for enhanced security</li>
+                        </ul>
+
+                        <h3>Supported File Formats</h3>
+                        <p>PNG, JPG/JPEG, GIF, BMP, WebP, TIFF</p>
+
+                        <h3>File Size Limit</h3>
+                        <p>Maximum 50MB per image</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 PixelLock 3DES | Secure Image Encryption System | <i class="fas fa-shield-alt"></i> Information Security</p>
+        </footer>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

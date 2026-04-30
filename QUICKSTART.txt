@@ -1,0 +1,95 @@
+PixelLock 3DES - Quick Start Guide
+===================================
+
+INSTALLATION
+============
+
+1. Install Python dependencies:
+   pip install -r requirements.txt
+
+2. Run the application:
+   python run.py
+
+3. Open browser:
+   http://localhost:5000
+
+
+QUICK USAGE
+===========
+
+ENCRYPTING AN IMAGE:
+1. Click "Encrypt Image" tab
+2. Click "Generate New Key" and save it
+3. Upload your image file
+4. Click "Encrypt Image" button
+5. Download encrypted data or copy it
+
+DECRYPTING AN IMAGE:
+1. Click "Decrypt Image" tab
+2. Paste your encryption key
+3. Paste the encrypted image data
+4. Click "Decrypt Image" button
+5. Download the decrypted image
+
+VERIFYING INTEGRITY:
+1. Click "Verify Integrity" tab
+2. Upload the image
+3. Paste the expected SHA-256 hash
+4. Click "Verify Integrity" button
+5. Check if image is authentic
+
+
+SUPPORTED FORMATS
+=================
+- PNG
+- JPEG / JPG
+- GIF
+- BMP
+- WebP
+- TIFF
+
+Maximum file size: 50MB
+
+
+SECURITY TIPS
+=============
+✓ Always save your encryption key in a secure location
+✓ Use different keys for different images
+✓ Share encrypted data via secure channels
+✓ Store original images in a safe place
+✓ Verify integrity after transmission
+
+
+PROJECT STRUCTURE
+=================
+app/
+├── app.py                  - Flask application
+├── crypto_handler.py       - Encryption logic
+├── hash_handler.py         - Hashing logic
+├── templates/index.html    - Web interface
+└── static/
+    ├── css/style.css       - Styling
+    └── js/script.js        - Frontend logic
+
+requirements.txt           - Python packages
+README.md                 - Full documentation
+config.py                - Configuration
+run.py                   - Run script
+
+
+TROUBLESHOOTING
+===============
+
+Issue: Port 5000 already in use
+Fix: Edit run.py and change port number
+
+Issue: Module not found error
+Fix: pip install -r requirements.txt
+
+Issue: Cannot decrypt image
+Fix: Make sure you're using the correct key
+
+
+FOR MORE INFORMATION
+====================
+See README.md for comprehensive documentation
